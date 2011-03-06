@@ -12,7 +12,9 @@ PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest
+tmp_docs_dir=/tmp/js-tmp-docs
+
+.PHONY: help clean html ghdocs dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -40,6 +42,24 @@ html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
+ghdocs:
+	rm -rf $(tmp_docs_dir)
+	mkdir $(tmp_docs_dir)
+	$(MAKE) html
+	cp -r build/html/* $(tmp_docs_dir)
+	mv $(tmp_docs_dir)/_static $(tmp_docs_dir)/static
+	mv $(tmp_docs_dir)/_sources $(tmp_docs_dir)/sources
+	perl -pi -e "s/_sources/sources/g;" $(tmp_docs_dir)/*.html
+	perl -pi -e "s/_static/static/g;" $(tmp_docs_dir)/*.html
+	git checkout gh-pages
+	rm -r sources static & 2>/dev/null
+	cp -rf $(tmp_docs_dir)/* .
+	rm -rf build
+	git add -A
+	git commit -a -m 'Updates $(project) documentation.' || 2> cat
+	git checkout master
+	rm -rf $(tmp_docs_dir)
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
