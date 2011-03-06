@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to Write Maintainable OO JavaScript Code &mdash; Javascript book v1.0 documentation</title>
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="Javascript book v1.0 documentation" href="index.html" />
+    <link rel="prev" title="Large scale js" href="largescale.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="largescale.html" title="Large scale js"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Javascript book v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="how-to-write-maintainable-oo-javascript-code">
+<h1>How to Write Maintainable OO JavaScript Code<a class="headerlink" href="#how-to-write-maintainable-oo-javascript-code" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="http://msdn.microsoft.com/en-US/scriptjunkie/gg602402.aspx">http://msdn.microsoft.com/en-US/scriptjunkie/gg602402.aspx</a></p>
+<p>Writing maintainable Object-Oriented (OO) JavaScript will save you money and make you popular. Don&#8217;t believe me? Odds are that either you or someone else will come back and work with your code. Making that as painless an experience as possible will save time, which we all know equates to money. It will also win you the favor of those for whom you just saved a headache. But before we dive into writing maintainable OO JavaScript, let&#8217;s just take a quick look at what OO is all about. If you know already about OO, feel free to skip the next section.</p>
+<div class="section" id="what-is-oo">
+<h2>What is OO?<a class="headerlink" href="#what-is-oo" title="Permalink to this headline">¶</a></h2>
+<p>Object-oriented programming basically represents physical, real-world objects that you want to work with in code. In order to create objects, you need to first define them by writing what&#8217;s called a class. Classes can represent pretty much anything: accounts, employees, navigation menus, vehicles, plants, advertisements, drinks, etc... Then, every time you want to create an object to work with, you instantiate one from a class. In other words, you create an instance of a class which gives you an object to work with. In fact, the best time to be using objects is when you&#8217;ll be dealing with more than one of anything. Otherwise, a simple functional program will likely do just as well. Objects are essentially containers for data. So in the case of an employee object, you might store their employee number, name, start date, title, salary, seniority, etc... Objects also include functions (called methods) to handle that data. Methods are used as intermediaries to ensure data integrity. They&#8217;re also used to transform data before storing it. For example, a method could receive a date in an arbitrary format then convert it to a standardized format before storing it. Finally, classes can also inherit from other classes. Inheritance allows you to reuse code across different types of classes. For example, both bank account and video store account classes could inherit from a base account class which would provide fields for profile information, account creation date, branch information, etc... Then, each would define its own transactions or rentals handling data structures and methods.</p>
+<p>Warning: JavaScript OO is different
+In the previous section I outlined the basics of classical object-oriented programming. I say classical because JavaScript doesn&#8217;t quite follow those rules. Instead, JavaScript classes are actually written as functions and inheritance is prototypal. Prototypal inheritance basically means that rather than classes inheriting from classes, they inherit from objects using the prototype property.</p>
+</div>
+<div class="section" id="object-instantiation">
+<h2>Object Instantiation<a class="headerlink" href="#object-instantiation" title="Permalink to this headline">¶</a></h2>
+<p>Here&#8217;s an example of object instantiation in JavaScript:</p>
+<p>// Define the Employee class
+function Employee(num, fname, lname) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>this.getFullName = function () {</dt>
+<dd>return fname + &#8221; &#8221; + lname;</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>};</p>
+<p>// Instantiate an Employee object
+var john = new Employee(&#8220;4815162342&#8221;, &#8220;John&#8221;, &#8220;Doe&#8221;);
+alert(&#8220;The employee&#8217;s full name is &#8221; + john.getFullName());
+There are three important things to note here:</p>
+<p>I uppercased the first letter of my &#8220;class&#8221; function. That important distinction lets people know that it&#8217;s for instantiation and not to be called as a normal function.
+I use the new operator when instantiating. Leaving it out would simply call the function and result in problems.
+Though getFullName is publicly available because it&#8217;s assigned to the this operator, fname and lname are not. The closure created by the Employee function gives getFullName access to fname and lname while allowing them to remain private from everyone else.
+Prototypal Inheritance
+Now, here&#8217;s an example of prototypal inheritance in JavaScript:</p>
+<p>// Define Human class
+function Human() {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>this.setName = function (fname, lname) {</dt>
+<dd>this.fname = fname;
+this.lname = lname;</dd>
+</dl>
+<p>}
+this.getFullName = function () {</p>
+<blockquote>
+<div>return this.fname + &#8221; &#8221; + this.lname;</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+<p>// Define the Employee class
+function Employee(num) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>this.getNum = function () {</dt>
+<dd>return num;</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>};
+// Let Employee inherit from Human
+Employee.prototype = new Human();</p>
+<p>// Instantiate an Employee object
+var john = new Employee(&#8220;4815162342&#8221;);</p>
+<blockquote>
+<div>john.setName(&#8220;John&#8221;, &#8220;Doe&#8221;);</div></blockquote>
+<p>alert(john.getFullName() + &#8220;&#8216;s employee number is &#8221; + john.getNum());
+This time, I&#8217;ve created a Human class which contains properties common to humans&#8211;I moved fname and lname there since all humans, not just employees have names. I then extended the Employee class by assigning a Human object to its prototype property.</p>
+</div>
+<div class="section" id="code-reuse-through-inheritance">
+<h2>Code Reuse Through Inheritance<a class="headerlink" href="#code-reuse-through-inheritance" title="Permalink to this headline">¶</a></h2>
+<p>In the previous example, I split the original Employee class in two. I moved out all the properties common to all humans into a Human class, and then caused Employee to inherit from Human. That way, the properties laid out in Human could be used by other objects such as Student, Client, Citizen, Visitor, etc... As you may have noticed by now, this is a great way to compartmentalize and reuse code. Rather than recreating all of those properties for every single type of object where we&#8217;re dealing with a human being, we can just use what&#8217;s already available by inheriting from Human. What&#8217;s more, if we ever wanted to add a property like say, middle name, we&#8217;d do it once and it would immediately be available to everyone inheriting from Human. Conversely, if we only wanted to add a middle name property to just one object, we could do it directly in that object instead of adding it to Human.</p>
+</div>
+<div class="section" id="public-and-private">
+<h2>Public and Private<a class="headerlink" href="#public-and-private" title="Permalink to this headline">¶</a></h2>
+<p>I&#8217;d like to touch on the subject of public and private variables in classes. Depending on what you&#8217;re doing with the data in an object, you&#8217;ll want to either make it private or public. A private property doesn&#8217;t necessarily mean that people won&#8217;t have access to it. You may just want them to go through one of your methods first.</p>
+</div>
+<div class="section" id="read-only">
+<h2>Read-only<a class="headerlink" href="#read-only" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes, you only want a value defined once at the moment the object is created. Once created, you don&#8217;t want anyone changing that value. In order to do this, you create a private variable and have its value set on instantiation.</p>
+<dl class="docutils">
+<dt>function Animal(type) {</dt>
+<dd><p class="first">var data = [];
+data[&#8216;type&#8217;] = type;
+this.getType = function () {</p>
+<blockquote>
+<div>return data[&#8216;type&#8217;];</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>}</p>
+<p>var fluffy = new Animal(&#8216;dog&#8217;);
+fluffy.getType(); // returns &#8216;dog&#8217;
+In this example, I create a local array called data within the Animal class. When an Animal object is instantiated, a value for type is passed and set in the data array. This value can&#8217;t be overwritten as it&#8217;s private (the Animal function defines its scope). The only way to read the type value once an object is instantiated is to call the getType method that I&#8217;ve explicitly exposed. Since getType is defined inside Animal, it has access to data by virtue of the closure created by Animal. This way, people can read the object&#8217;s type but not change it.</p>
+<p>It&#8217;s important to note that the &#8220;read-only&#8221; technique will not work when an object is inherited from. Every object instantiated after the inheritance is performed will share those read-only variables and overwrite each other&#8217;s values. The simplest solution is to convert the read-only variables in the class to public ones. If however, you must keep them private, you can employ the technique pointed out by Philippe in the comments.</p>
+<p>Public
+There are times however, that you&#8217;ll want to be able to read and write a property&#8217;s value at will. To do that, you need to expose the property using the this operator.</p>
+<dl class="docutils">
+<dt>function Animal() {</dt>
+<dd>this.mood = &#8216;&#8217;;</dd>
+</dl>
+<p>}</p>
+<p>var fluffy = new Animal();
+fluffy.mood = &#8216;happy&#8217;;
+fluffy.mood; // returns &#8216;happy&#8217;
+This time our Animal class exposes a property named mood which can be written to and read at will. You can equally assign a function to public properties like the getType function in the previous example. Just be careful not to assign a value to a property like getType or you&#8217;ll destroy it with your value.</p>
+<p>Completely Private
+Finally, you might find yourself in scenarios where you need a local variable that&#8217;s completely private. In this case, you can use the same pattern as the first example and just not create a public method for people to access it.</p>
+<dl class="docutils">
+<dt>function Animal() {</dt>
+<dd>var secret = &#8220;You&#8217;ll never know!&#8221;</dd>
+</dl>
+<p>}</p>
+<p>var fluffy = new Animal();</p>
+</div>
+<div class="section" id="writing-a-flexible-api">
+<h2>Writing a Flexible API<a class="headerlink" href="#writing-a-flexible-api" title="Permalink to this headline">¶</a></h2>
+<p>Now that we&#8217;ve covered class creation, we need to future proof them in order to keep up with product requirement changes. If you&#8217;ve done any project work, or maintained a product long-term, you know that requirements change. It&#8217;s a fact of life. To think otherwise is to doom your code to obsolescence before it&#8217;s even written. You may suddenly have to animate your tab content, or have it fetch data via an Ajax call. Though it&#8217;s impossible to truly predict the future, it is possible to write code that&#8217;s flexible enough to be reasonably future proof.</p>
+</div>
+<div class="section" id="saner-parameter-lists">
+<h2>Saner Parameter Lists<a class="headerlink" href="#saner-parameter-lists" title="Permalink to this headline">¶</a></h2>
+<p>One place where future-proofing can be done is when designing parameter lists. They&#8217;re the main point of contact for people implementing your code and can be problematic if not well designed. What you want to avoid are parameter lists like this:</p>
+<p>function Person(employeeId, fname, lname, tel, fax, email, email2, dob) {
+};
+This class is very fragile. If you want to add a middle name parameter once you&#8217;ve released the code, you&#8217;re going to have to do it at the very end of the list since order matters. That makes it awkward to work with. It also makes it difficult to work with if you don&#8217;t have values for each parameter. For example:</p>
+<p>var ara = new Person(1234, &#8220;Ara&#8221;, &#8220;Pehlivanian&#8221;, &#8220;514-555-1234&#8221;, null, null, null, &#8220;1976-05-17&#8221;);
+A cleaner, more flexible way of approaching parameter lists is to use this pattern:</p>
+<p>function Person(employeeId, data) {
+};
+The first parameter is there because it&#8217;s required. The rest is lumped together in an object which can be very flexible to work with.</p>
+<dl class="docutils">
+<dt>var ara = new Person(1234, {</dt>
+<dd>fname: &#8220;Ara&#8221;,
+lname: &#8220;Pehlivanian&#8221;,
+tel: &#8220;514-555-1234&#8221;,
+dob: &#8220;1976-05-17&#8221;</dd>
+</dl>
+<p>});
+The beauty of this pattern is that it&#8217;s both easy to read and highly flexible. Note how fax, email and email2 were completely left out. Also, since objects aren&#8217;t order specific, adding a middle name parameter is as easy as throwing it in wherever it&#8217;s convenient:</p>
+<dl class="docutils">
+<dt>var ara = new Person(1234, {</dt>
+<dd>fname: &#8220;Ara&#8221;,
+mname: &#8220;Chris&#8221;,
+lname: &#8220;Pehlivanian&#8221;,
+tel: &#8220;514-555-1234&#8221;,
+dob: &#8220;1976-05-17&#8221;</dd>
+</dl>
+<p>});
+The code inside the class doesn&#8217;t care because the values get accessed by index like so:</p>
+<p>function Person(employeeId, data) {
+this.fname = data[&#8216;fname&#8217;];
+};
+If data[&#8216;fname&#8217;] returns a value, it gets set. Otherwise, it doesn&#8217;t, and nothing breaks.</p>
+</div>
+<div class="section" id="make-it-pluggable">
+<h2>Make It Pluggable<a class="headerlink" href="#make-it-pluggable" title="Permalink to this headline">¶</a></h2>
+<p>As time goes on, product requirements might demand additional behavior from your classes. Yet often times that behavior has absolutely nothing to do with your class&#8217;s core functionality. It&#8217;s also likely that it&#8217;s a requirement for only one implementation of the class, like fading in the contents of one tab&#8217;s panel while fetching external data for another. You may be tempted to put those abilities inside your class, but they don&#8217;t belong there. A tab strip&#8217;s responsibility is to manage tabs. Animation and data fetching are two completely separate things and should be kept outside the tab strip&#8217;s code. The only way to future proof your tab strip and keep all that extra functionality external, is to allow people to plug behaviors into your code. In other words, allow people to hook into key moments in your code by creating events like onTabChange, afterTabChange, onShowPanel, afterShowPanel and so on. That way, they can easily hook into your onShowPanel event, write a handler that fades in the contents of that panel and everyone is happy. JavaScript libraries allow you to do this easily enough, but it&#8217;s not too hard to work it out on your own. Here&#8217;s a simple example using YUI 3.</p>
+<p>&lt;script type=&#8221;text/javascript&#8221; src=&#8221;<a class="reference external" href="http://yui.yahooapis.com/combo?3.2.0/build/yui/yui-min.js">http://yui.yahooapis.com/combo?3.2.0/build/yui/yui-min.js</a>&#8220;&gt;&lt;/script&gt;
+&lt;script type=&#8221;text/javascript&#8221;&gt;</p>
+<blockquote>
+<div><p>YUI().use(&#8216;event&#8217;, function (Y) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>function TabStrip() {</dt>
+<dd><dl class="first docutils">
+<dt>this.showPanel = function () {</dt>
+<dd><p class="first">this.fire(&#8216;onShowPanel&#8217;);</p>
+<p>// Code to show the panel</p>
+<p class="last">this.fire(&#8216;afterShowPanel&#8217;);</p>
+</dd>
+</dl>
+<p class="last">};</p>
+</dd>
+</dl>
+<p>};</p>
+<p>// Give TabStrip the ability to fire custom events
+Y.augment(TabStrip, Y.EventTarget);</p>
+<p>var ts = new TabStrip();</p>
+<p>// Set up custom event handlers for this instance of TabStrip
+ts.on(&#8216;onShowPanel&#8217;, function () {</p>
+<blockquote>
+<div>//Do something before showing panel</div></blockquote>
+<p>});
+ts.on(&#8216;onShowPanel&#8217;, function () {</p>
+<blockquote>
+<div>//Do something else before showing panel</div></blockquote>
+<p>});
+ts.on(&#8216;afterShowPanel&#8217;, function () {</p>
+<blockquote>
+<div>//Do something after showing panel</div></blockquote>
+<p>});</p>
+<p>ts.showPanel();</p>
+</div></blockquote>
+<p>});</p>
+</div></blockquote>
+<p>&lt;/script&gt;
+This example has a simple TabStrip class with a showPanel method. The method fires two events, onShowPanel and afterShowPanel. It&#8217;s given the ability to do so by augmenting the class with Y.EventTarget. Once that&#8217;s done, we instantiate a TabStrip object and assign a bunch of event handlers to it. This is our custom code for handling this instance&#8217;s unique behavior without messing with the actual class.</p>
+</div>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>If you plan on reusing code either on the same page, website or across multiple projects, consider packaging and organizing it in classes. Object-oriented JavaScript lends itself naturally to better code organization and reuse. What&#8217;s more, with a little forethought, you can make sure that your code is flexible enough to stay in use long after you&#8217;ve written it. Writing reusable, future-proof JavaScript will save you, your team and your company time and money. That&#8217;s sure to make you popular.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">How to Write Maintainable OO JavaScript Code</a><ul>
+<li><a class="reference internal" href="#what-is-oo">What is OO?</a></li>
+<li><a class="reference internal" href="#object-instantiation">Object Instantiation</a></li>
+<li><a class="reference internal" href="#code-reuse-through-inheritance">Code Reuse Through Inheritance</a></li>
+<li><a class="reference internal" href="#public-and-private">Public and Private</a></li>
+<li><a class="reference internal" href="#read-only">Read-only</a></li>
+<li><a class="reference internal" href="#writing-a-flexible-api">Writing a Flexible API</a></li>
+<li><a class="reference internal" href="#saner-parameter-lists">Saner Parameter Lists</a></li>
+<li><a class="reference internal" href="#make-it-pluggable">Make It Pluggable</a></li>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="largescale.html"
+                        title="previous chapter">Large scale js</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="sources/maintainable.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="largescale.html" title="Large scale js"
+             >previous</a> |</li>
+        <li><a href="index.html">Javascript book v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Vladimir Shulyak.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
